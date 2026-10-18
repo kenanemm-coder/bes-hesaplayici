@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Emeklilik Şirketleri: Katılımcı Sayıları ve Pazar Payı</title>
-<meta name="description" content="Türkiye'de 15 emeklilik şirketinin katılımcı sayıları ve pazar payları, EGM verisiyle, 30 Eylül 2026 itibarıyla.">
+<meta name="description" content="Türkiye'de 15 emeklilik şirketinin katılımcı sayıları, fon tutarları ve pazar payları, EGM verisiyle, 30 Eylül 2026 itibarıyla.">
 <meta name="theme-color" content="#0A6A5C">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -13,7 +13,7 @@
 <div class="wrap">
   <header>
     <h1>Emeklilik şirketleri</h1>
-    <p class="lead">Türkiye'de 15 emeklilik şirketi var. Hangisinin kaç katılımcısı olduğunu ve pazarın nasıl dağıldığını burada görebilirsin.</p>
+    <p class="lead">Türkiye'de 15 emeklilik şirketi var. Hangisinin kaç katılımcısı ve ne kadar fonu olduğunu, pazarın nasıl dağıldığını burada görebilirsin.</p>
     <p class="stamp">30 Eylül 2026 itibarıyla · kaynak EGM</p>
     <nav class="nav" aria-label="Ana menü">
       <a href="./">Hesaplayıcı</a>
@@ -24,17 +24,22 @@
   </header>
 
   <article class="article">
-    <div class="note ok">Şirketlerin toplam katılımcı sayısı 10.373.888. İlk 3 şirketin payı %57,2, ilk 5 şirketin payı %81,0.</div>
+    <div class="stats" style="margin-bottom:6px">
+      <div class="stat"><b>10.373.888</b><span>Toplam katılımcı (şirket toplamı)</span></div>
+      <div class="stat"><b>2,12 trilyon TL</b><span>Toplam fon tutarı (şirket toplamı)</span></div>
+      <div class="stat"><b>%81,0</b><span>İlk 5 şirketin katılımcı payı</span></div>
+    </div>
 
-    <h2>Şirket bazında katılımcı sayısı</h2>
-    <p>Katılımcı sayısına göre büyükten küçüğe. Çubuk, en büyük şirkete göre oranı gösterir.</p>
-    <div class="tablewrap"><table class="co"><thead><tr><th>Şirket</th><th>Katılımcı</th><th>Pay</th></tr></thead><tbody><tr><td><span class="nm">Türkiye Hayat ve Emeklilik</span><div class="bar" style="width:100.0%"></div></td><td>2.466.458</td><td>%23,8</td></tr><tr><td><span class="nm">Anadolu Hayat Emeklilik</span><div class="bar" style="width:72.9%"></div></td><td>1.797.117</td><td>%17,3</td></tr><tr><td><span class="nm">Garanti Emeklilik ve Hayat</span><div class="bar" style="width:67.6%"></div></td><td>1.668.083</td><td>%16,1</td></tr><tr><td><span class="nm">Allianz Yaşam ve Emeklilik</span><div class="bar" style="width:54.6%"></div></td><td>1.345.529</td><td>%13,0</td></tr><tr><td><span class="nm">AgeSA Hayat ve Emeklilik</span><div class="bar" style="width:45.7%"></div></td><td>1.127.777</td><td>%10,9</td></tr><tr><td><span class="nm">Katılım Emeklilik ve Hayat</span><div class="bar" style="width:27.6%"></div></td><td>681.240</td><td>%6,6</td></tr><tr><td><span class="nm">Metlife Emeklilik ve Hayat</span><div class="bar" style="width:13.8%"></div></td><td>340.186</td><td>%3,3</td></tr><tr><td><span class="nm">Zurich Yaşam ve Emeklilik</span><div class="bar" style="width:9.5%"></div></td><td>235.114</td><td>%2,3</td></tr><tr><td><span class="nm">BNP Paribas Cardif Emeklilik</span><div class="bar" style="width:8.2%"></div></td><td>202.052</td><td>%1,9</td></tr><tr><td><span class="nm">HDI Fiba Emeklilik ve Hayat</span><div class="bar" style="width:5.4%"></div></td><td>132.023</td><td>%1,3</td></tr><tr><td><span class="nm">Axa Hayat ve Emeklilik</span><div class="bar" style="width:4.2%"></div></td><td>104.726</td><td>%1,0</td></tr><tr><td><span class="nm">Bereket Emeklilik ve Hayat</span><div class="bar" style="width:4.2%"></div></td><td>104.143</td><td>%1,0</td></tr><tr><td><span class="nm">Allianz Hayat ve Emeklilik</span><div class="bar" style="width:3.8%"></div></td><td>93.040</td><td>%0,9</td></tr><tr><td><span class="nm">QNB Sağlık Hayat Sigorta ve Emeklilik</span><div class="bar" style="width:1.8%"></div></td><td>43.895</td><td>%0,4</td></tr><tr><td><span class="nm">Viennalife Emeklilik ve Hayat</span><div class="bar" style="width:1.3%"></div></td><td>32.505</td><td>%0,3</td></tr></tbody></table></div>
-    <p class="src">Kaynak: <a href="https://www.egm.org.tr/bilgi-merkezi/istatistikler/" target="_blank" rel="noopener">Emeklilik Gözetim Merkezi (EGM)</a>, "Şirket Bazında Katılımcı Sayıları" (EGM-01-003), 30 Eylül 2026. Pay, tablodaki şirketlerin toplamına göre hesaplandı.</p>
+    <h2>Şirket bazında katılımcı ve fon</h2>
+    <p>Katılımcı sayısına göre büyükten küçüğe. Çubuk, en büyük şirkete göre katılımcı oranını gösterir. Fon tutarı milyar TL.</p>
+    <div class="tablewrap"><table class="co"><thead><tr><th>Şirket</th><th>Katılımcı</th><th>Pay</th><th>Fon (mlr TL)</th></tr></thead><tbody><tr><td><span class="nm">Türkiye Hayat ve Emeklilik</span><div class="bar" style="width:100.0%"></div></td><td>2.466.458</td><td>%23,8</td><td>420,5</td></tr><tr><td><span class="nm">Anadolu Hayat Emeklilik</span><div class="bar" style="width:72.9%"></div></td><td>1.797.117</td><td>%17,3</td><td>352,3</td></tr><tr><td><span class="nm">Garanti Emeklilik ve Hayat</span><div class="bar" style="width:67.6%"></div></td><td>1.668.083</td><td>%16,1</td><td>346,5</td></tr><tr><td><span class="nm">Allianz Yaşam ve Emeklilik</span><div class="bar" style="width:54.6%"></div></td><td>1.345.529</td><td>%13,0</td><td>312,9</td></tr><tr><td><span class="nm">AgeSA Hayat ve Emeklilik</span><div class="bar" style="width:45.7%"></div></td><td>1.127.777</td><td>%10,9</td><td>410,0</td></tr><tr><td><span class="nm">Katılım Emeklilik ve Hayat</span><div class="bar" style="width:27.6%"></div></td><td>681.240</td><td>%6,6</td><td>59,2</td></tr><tr><td><span class="nm">Metlife Emeklilik ve Hayat</span><div class="bar" style="width:13.8%"></div></td><td>340.186</td><td>%3,3</td><td>24,5</td></tr><tr><td><span class="nm">Zurich Yaşam ve Emeklilik</span><div class="bar" style="width:9.5%"></div></td><td>235.114</td><td>%2,3</td><td>43,1</td></tr><tr><td><span class="nm">BNP Paribas Cardif Emeklilik</span><div class="bar" style="width:8.2%"></div></td><td>202.052</td><td>%1,9</td><td>33,9</td></tr><tr><td><span class="nm">HDI Fiba Emeklilik ve Hayat</span><div class="bar" style="width:5.4%"></div></td><td>132.023</td><td>%1,3</td><td>33,7</td></tr><tr><td><span class="nm">Axa Hayat ve Emeklilik</span><div class="bar" style="width:4.2%"></div></td><td>104.726</td><td>%1,0</td><td>9,3</td></tr><tr><td><span class="nm">Bereket Emeklilik ve Hayat</span><div class="bar" style="width:4.2%"></div></td><td>104.143</td><td>%1,0</td><td>6,4</td></tr><tr><td><span class="nm">Allianz Hayat ve Emeklilik</span><div class="bar" style="width:3.8%"></div></td><td>93.040</td><td>%0,9</td><td>62,4</td></tr><tr><td><span class="nm">QNB Sağlık Hayat Sigorta ve Emeklilik</span><div class="bar" style="width:1.8%"></div></td><td>43.895</td><td>%0,4</td><td>5,7</td></tr><tr><td><span class="nm">Viennalife Emeklilik ve Hayat</span><div class="bar" style="width:1.3%"></div></td><td>32.505</td><td>%0,3</td><td>0,5</td></tr></tbody></table></div>
+    <p class="src">Kaynak: <a href="https://www.egm.org.tr/bilgi-merkezi/istatistikler/" target="_blank" rel="noopener">Emeklilik Gözetim Merkezi (EGM)</a>, "Şirket Bazında Katılımcı Sayıları" (EGM-01-003) ve "Şirket Bazında Fon Tutarı" grafikleri, 30 Eylül 2026. Pay, tablodaki şirketlerin toplamına göre hesaplandı.</p>
 
     <h2>Bu rakamlar neyi gösteriyor?</h2>
     <ul>
-      <li>Toplam 10,37 milyon. EGM'nin gönüllü BES katılımcı sayısı 15 Ekim 2026'da 10,39 milyon göründüğü için tablo gönüllü BES katılımcılarını gösteriyor. Otomatik Katılım Sistemi katılımcıları ayrı sayılıyor.</li>
-      <li>Katılımcı sayısı, şirketin büyüklüğünün tek ölçüsü değildir. Fon büyüklüğü ve yönetilen varlık da önemlidir, onlar bu tabloda yok.</li>
+      <li>Katılımcı toplamı 10,37 milyon. EGM'nin gönüllü BES katılımcı sayısı 15 Ekim 2026'da 10,39 milyon göründüğü için tablo gönüllü BES katılımcılarını gösteriyor. Otomatik Katılım Sistemi katılımcıları ayrı sayılıyor.</li>
+      <li>Fon tutarı toplamı 2,12 trilyon TL. EGM ana sayfasında gönüllü BES fon büyüklüğü 15 Ekim 2026'da 2,41 trilyon TL görünüyor. Aradaki fark tarih farkından ve ölçütten (örneğin devlet katkısı fonunun ayrı sayılması) kaynaklanıyor olabilir, bunu doğrulayamadım.</li>
+      <li>Katılımcı sayısı ile fon tutarı aynı sırayı vermez. Örneğin AgeSA katılımcı sayısında 5., fon tutarında 2. sırada.</li>
       <li>Bu tablo bir şirketin diğerinden daha iyi olduğunu göstermez. Şirket seçerken fon getirisi, giderler ve hizmet gibi başka ölçütlere de bakmak gerekir.</li>
     </ul>
     <p><a class="cta" href="./">Kendi birikimini hesapla</a></p>
