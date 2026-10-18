@@ -80,5 +80,27 @@
     }
   ],
   "toplam_fon_tl": 2120948307100,
-  "kaynak_fon": "EGM, Şirket Bazında Fon Tutarı grafiği (tarih dosyada yok, 30 Eylül 2026 varsayıldı)"
+  "kaynak_fon": "EGM, Şirket Bazında Fon Tutarı grafiği (tarih dosyada yok, 30 Eylül 2026 varsayıldı)",
+  "onceki": {
+    "tarih": "30 Eylül 2025",
+    "kaynak": "EGM, Şirket Bazında Fon Tutarı grafiği",
+    "fon_tl": {
+      "AgeSA Hayat ve Emeklilik": 299251765291,
+      "Allianz Hayat ve Emeklilik": 43276440567,
+      "Allianz Yaşam ve Emeklilik": 217392314571,
+      "Anadolu Hayat Emeklilik": 262596126207,
+      "Axa Hayat ve Emeklilik": 7110501098,
+      "Bereket Emeklilik ve Hayat": 4967178617,
+      "BNP Paribas Cardif Emeklilik": 26660892514,
+      "Garanti Emeklilik ve Hayat": 220647182187,
+      "HDI Fiba Emeklilik ve Hayat": 24862234413,
+      "Katılım Emeklilik ve Hayat": 41994586216,
+      "Metlife Emeklilik ve Hayat": 18135766002,
+      "QNB Sağlık Hayat Sigorta ve Emeklilik": 4532927406,
+      "Türkiye Hayat ve Emeklilik": 317229939981,
+      "Viennalife Emeklilik ve Hayat": 449761514,
+      "Zurich Yaşam ve Emeklilik": 36529095951
+    },
+    "toplam_fon_tl": 1525636712535
+  }
 }
