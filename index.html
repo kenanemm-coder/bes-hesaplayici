@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BES Hesaplayıcı 2026: Devlet Katkısı ve Çıkış Hesabı</title>
+<meta name="description" content="2026 BES kurallarına göre devlet katkısını, erken çıkışta kaybını ve vergi sonrası birikimini hesapla. Devlet katkısı %20, yıllık tavan 79.272 TL.">
+<meta name="theme-color" content="#0A6A5C">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Düzen: tek sütun; üstte girdiler, altında sonuç, yıl yıl çıkış tablosu, senaryolar, varsayımlar. Geniş ekranda girdi ve sonuç yan yana. */
+:root{
+  --bg:#F2F5F4; --surface:#FFFFFF; --fg:#13201D; --muted:#51625E; --line:#D5DEDB;
+  --accent:#0A6A5C; --accent-fg:#FFFFFF; --soft:#E3F1ED; --warn:#8A5200; --warn-bg:#FFF1D6;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --f-num:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1614; --surface:#16211E; --fg:#E5EEEB; --muted:#9DB1AC; --line:#2B3B37;
+    --accent:#4CCDB0; --accent-fg:#06211B; --soft:#173229; --warn:#F0B35A; --warn-bg:#2C2210;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1614; --surface:#16211E; --fg:#E5EEEB; --muted:#9DB1AC; --line:#2B3B37;
+  --accent:#4CCDB0; --accent-fg:#06211B; --soft:#173229; --warn:#F0B35A; --warn-bg:#2C2210;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--f-body); font-size:16px; line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 48px;
+}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--f-display);font-size:clamp(1.9rem,6vw,2.7rem);line-height:1.08;margin:0 0 8px;letter-spacing:-.02em;text-wrap:balance}
+h2{font-family:var(--f-display);font-size:1.25rem;margin:0 0 10px;letter-spacing:-.01em;text-wrap:balance}
+p{margin:0}
+.lead{color:var(--muted);max-width:62ch}
+.stamp{font-family:var(--f-num);font-size:.78rem;color:var(--muted);letter-spacing:.02em;margin-top:10px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:start}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:.82rem;font-weight:500;color:var(--muted)}
+.inp{display:flex;align-items:center;border:1px solid var(--line);border-radius:7px;background:var(--bg);min-width:0}
+.inp:focus-within{outline:2px solid var(--accent);outline-offset:1px}
+.inp input{flex:1;min-width:0;border:0;background:transparent;color:var(--fg);font:500 1rem var(--f-num);padding:10px 4px 10px 12px;width:100%}
+.inp input:focus{outline:none}
+.inp span{font-family:var(--f-num);font-size:.82rem;color:var(--muted);padding:0 12px 0 4px}
+.hint{font-size:.78rem;color:var(--muted)}
+.result{display:flex;flex-direction:column;gap:16px}
+.big-label{font-size:.85rem;color:var(--muted)}
+.big{font-family:var(--f-num);font-weight:500;font-size:clamp(1.9rem,7vw,2.8rem);line-height:1.1;letter-spacing:-.02em;color:var(--accent);overflow-wrap:anywhere}
+.real{font-size:.95rem}
+.real b{font-family:var(--f-num);font-weight:500}
+dl.rows{margin:0;display:grid;grid-template-columns:1fr auto;gap:0 16px}
+dl.rows dt,dl.rows dd{margin:0;padding:9px 0;border-top:1px solid var(--line)}
+dl.rows dt{color:var(--muted);font-size:.92rem}
+dl.rows dd{font-family:var(--f-num);font-size:.92rem;text-align:right}
+.note{background:var(--warn-bg);color:var(--fg);border-left:3px solid var(--warn);padding:10px 14px;border-radius:4px;font-size:.9rem}
+.note.ok{background:var(--soft);border-left-color:var(--accent)}
+.note + .note{margin-top:8px}
+.notes{display:flex;flex-direction:column;gap:8px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
+#scn,#cmp{min-width:340px}
+th,td{padding:10px 14px;text-align:right;border-top:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{border-top:0;font-weight:600;font-size:.78rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+td{font-family:var(--f-num)}
+tr.hit td{background:var(--soft);font-weight:500}
+.sec p{color:var(--muted);font-size:.92rem;margin-bottom:10px;max-width:68ch}
+ul.plain{margin:0;padding-left:1.2em;color:var(--muted);font-size:.92rem;max-width:72ch}
+ul.plain li{margin-bottom:6px}
+a{color:var(--accent)}
+.disc{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;max-width:72ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>BES Hesaplayıcı</h1>
+    <p class="lead">Aylık katkına göre devlet katkısını, erken çıkışta kaybedeceğin tutarı ve vergi sonrası eline geçecek parayı hesapla. Başlangıç değerleri örnektir, kendi bilgilerinle değiştir.</p>
+    <p class="stamp">2026 kuralları · devlet katkısı %20 · son kontrol 18.10.2026</p>
+  </header>
+
+  <div class="layout">
+    <section class="panel" aria-labelledby="h-in">
+      <h2 id="h-in">Bilgilerin</h2>
+      <div class="fields">
+        <div class="field"><label for="monthly">Aylık katkı payı</label><div class="inp"><input id="monthly" type="number" inputmode="decimal" min="0" step="100" value="2500"><span>TL</span></div></div>
+        <div class="field"><label for="years">Süre</label><div class="inp"><input id="years" type="number" inputmode="numeric" min="1" max="45" step="1" value="25"><span>yıl</span></div></div>
+        <div class="field"><label for="age">Bugünkü yaşın</label><div class="inp"><input id="age" type="number" inputmode="numeric" min="18" max="80" step="1" value="30"><span>yaş</span></div></div>
+        <div class="field"><label for="growth">Katkıyı yıllık artırma</label><div class="inp"><input id="growth" type="number" inputmode="decimal" min="0" max="200" step="1" value="25"><span>%</span></div></div>
+        <div class="field"><label for="ret">Yıllık fon getirisi</label><div class="inp"><input id="ret" type="number" inputmode="decimal" min="0" max="200" step="1" value="30"><span>%</span></div><span class="hint">Giderler düşülmüş, stopaj öncesi</span></div>
+        <div class="field"><label for="infl">Yıllık enflasyon</label><div class="inp"><input id="infl" type="number" inputmode="decimal" min="0" max="200" step="1" value="25"><span>%</span></div><span class="hint">Bugünün parasıyla görmek için</span></div>
+        <div class="field"><label for="alt">Alternatif net getiri</label><div class="inp"><input id="alt" type="number" inputmode="decimal" min="0" max="200" step="1" value="27"><span>%</span></div><span class="hint">Vergi sonrası, karşılaştırma için</span></div>
+      </div>
+    </section>
+
+    <section class="panel result" aria-live="polite" aria-labelledby="h-out">
+      <h2 id="h-out" class="big-label" style="font-family:var(--f-body);font-weight:400;font-size:.85rem;margin:0">Çıkışta eline geçecek (vergi ve hak ediş sonrası)</h2>
+      <div class="big" id="net">–</div>
+      <p class="real" id="real"></p>
+      <div class="notes" id="notes"></div>
+      <dl class="rows" id="rows"></dl>
+    </section>
+  </div>
+
+  <section class="sec">
+    <h2>Yıl yıl çıkış</h2>
+    <p>Aynı hesaptan hangi yılda çıkarsan ne alırsın. Devlet katkısı 3 yıldan önce hiç ödenmez, sonra kademeli ödenir. Seçtiğin süre vurgulu satırdır.</p>
+    <div class="tablewrap"><table id="tbl"><thead><tr><th>Yıl</th><th>Yatırdığın</th><th>Devlet kat. hak ediş</th><th>Stopaj</th><th>Eline geçen</th><th>Bugünün parası</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="sec">
+    <h2>Getiri senaryoları</h2>
+    <p>Aynı katkı ve süre için getiri 10 puan düşük ve 10 puan yüksek olsaydı. Geçmiş getiri gelecek getirinin garantisi değildir.</p>
+    <div class="tablewrap"><table id="scn"><thead><tr><th>Yıllık getiri</th><th>Eline geçen</th><th>Bugünün parası</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="sec">
+    <h2>BES ile alternatifin farkı</h2>
+    <p>Aynı aylık katkıyı, girdiğin net getiriyle (vergi sonrası) ayrı bir yerde biriktirseydin. Bu karşılaştırma bir öneri değildir, sadece rakamları yan yana koyar.</p>
+    <div class="tablewrap"><table id="cmp"><thead><tr><th>Seçenek</th><th>Süre sonunda</th><th>Bugünün parası</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="sec">
+    <h2>Hesabın varsayımları</h2>
+    <ul class="plain">
+      <li>Devlet katkısı katkı payının %20'si. Yıllık tavan 2026'da 79.272 TL (yıllık brüt asgari ücretin %20'si, yani 396.360 TL katkıya karşılık gelir). Tavanın her yıl enflasyon kadar arttığı varsayıldı.</li>
+      <li>Hak ediş: 3 yılda %15, 6 yılda %35, 10 yılda %60. Emeklilik için 56 yaş ve 10 yıl şartı aranır, bu durumda %100.</li>
+      <li>Stopaj yalnızca getiri üzerinden alınır: 10 yıldan az %15, 10 yıl ve üzeri %10, emeklilikte %5. Tam 10. yıl için kaynaklar farklı yazabilir, burada %10 alındı.</li>
+      <li>Katkı her ay başında yatırılır, getiri aylık işler. Devlet katkısının yatırılma gecikmesi, giriş aidatı ve fon gider farkları hesaba katılmadı. Fon getirisi kutusuna gider düşülmüş net değeri gir.</li>
+      <li>Katkı artışı ve enflasyon sabit kabul edildi. Gerçekte yıldan yıla değişir.</li>
+    </ul>
+  </section>
+
+  <p class="disc">Bu araç bilgilendirme amaçlıdır, yatırım, vergi veya hukuk tavsiyesi değildir. Kurallar değişebilir, 2026 başında devlet katkısı %30'dan %20'ye indi. Karar vermeden önce sözleşmeni ve güncel mevzuatı kontrol et. Kaynaklar: <a href="https://www.turkiyesigorta.com.tr/bireysel-emeklilik/devlet-katkisi" target="_blank" rel="noopener">Türkiye Sigorta, devlet katkısı</a> · <a href="https://www.ey.com/tr_tr/insights/tax/bes-devlet-katkisi-vergi-oranlari" target="_blank" rel="noopener">EY, devlet katkısı ve vergi oranları</a></p>
+</div>
+
+<script>
+/*SIM_START*/
+const RULES={stateRate:0.20,capYear:79272,retireAge:56,retireYears:10};
+function vestShare(t,eligible){ if(eligible) return 1; if(t>=10) return 0.60; if(t>=6) return 0.35; if(t>=3) return 0.15; return 0; }
+function stopajRate(t,eligible){ if(eligible) return 0.05; if(t>=10) return 0.10; return 0.15; }
+function simulate(p){
+  const N=Math.round(p.years);
+  const m=Math.pow(1+p.ret,1/12)-1, ma=Math.pow(1+p.alt,1/12)-1;
+  let own=0,ownC=0,st=0,stC=0,alt=0;
+  const rows=[];
+  for(let k=1;k<=N*12;k++){
+    const y=Math.floor((k-1)/12);
+    const c=p.monthly*Math.pow(1+p.growth,y);
+    const capM=RULES.capYear*Math.pow(1+p.infl,y)/12;
+    const s=Math.min(RULES.stateRate*c,capM);
+    own=(own+c)*(1+m); ownC+=c;
+    st=(st+s)*(1+m); stC+=s;
+    alt=(alt+c)*(1+ma);
+    if(k%12===0){
+      const t=k/12;
+      const elig=(p.age+t>=RULES.retireAge)&&t>=RULES.retireYears;
+      const sp=stopajRate(t,elig), hv=vestShare(t,elig);
+      const ownNet=own-Math.max(0,own-ownC)*sp;
+      const stNetFull=st-Math.max(0,st-stC)*sp;
+      const stPaid=hv*stNetFull;
+      const net=ownNet+stPaid;
+      const d=Math.pow(1+p.infl,t);
+      rows.push({t,elig,sp,hv,own,ownC,st,stC,ownNet,stNetFull,stPaid,net,real:net/d,altNet:alt,altReal:alt/d});
+    }
+  }
+  return rows;
+}
+/*SIM_END*/
+
+const nf=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:0});
+const tl=n=>nf.format(Math.round(n))+' TL';
+const pc=n=>'%'+nf.format(Math.round(n*100));
+const $=id=>document.getElementById(id);
+const num=(id,lo,hi,def)=>{let v=parseFloat(String($(id).value).replace(',','.'));if(!isFinite(v))v=def;return Math.min(hi,Math.max(lo,v));};
+
+function readParams(){
+  return {
+    monthly:num('monthly',0,10000000,2500),
+    years:num('years',1,45,25),
+    age:num('age',18,80,30),
+    growth:num('growth',0,200,25)/100,
+    ret:num('ret',0,200,30)/100,
+    infl:num('infl',0,200,25)/100,
+    alt:num('alt',0,200,27)/100
+  };
+}
+function setRows(tbody,html){tbody.innerHTML=html;}
+
+function render(){
+  const p=readParams();
+  const rows=simulate(p);
+  const N=rows.length, last=rows[N-1];
+  $('net').textContent=tl(last.net);
+  $('real').innerHTML='Bugünün parasıyla yaklaşık <b>'+tl(last.real)+'</b>';
+
+  const notes=[];
+  const ageEnd=Math.round(p.age+N);
+  if(N<3) notes.push(['','3 yıldan önce çıkarsan devlet katkısı hiç ödenmez.']);
+  if(last.elig) notes.push(['ok','Emeklilik şartı sağlanıyor ('+ageEnd+' yaş, '+N+' yıl). Devlet katkısı tamamen ödenir, stopaj %5.']);
+  else notes.push(['','Emeklilik şartı (56 yaş ve 10 yıl) bu senaryoda sağlanmıyor, '+ageEnd+' yaşında çıkış var. Devlet katkısının '+pc(last.hv)+' kadarı ödenir, stopaj '+pc(last.sp)+'.']);
+  if(p.monthly*12>396360) notes.push(['','Yıllık katkın '+tl(p.monthly*12)+', devlet katkısı tavanını aşıyor. İlk yıl için tavan 79.272 TL, bu 396.360 TL katkıya denk gelir. Fazlası ek devlet katkısı getirmez.']);
+  $('notes').innerHTML=notes.map(n=>'<div class="note '+n[0]+'">'+n[1]+'</div>').join('');
+
+  const lost=(last.own+last.st)-last.net;
+  $('rows').innerHTML=
+    '<dt>Toplam yatırdığın katkı</dt><dd>'+tl(last.ownC)+'</dd>'+
+    '<dt>Yatan devlet katkısı</dt><dd>'+tl(last.stC)+'</dd>'+
+    '<dt>Hesapta biriken (brüt)</dt><dd>'+tl(last.own+last.st)+'</dd>'+
+    '<dt>Stopaj ve hak edilmeyen kısım</dt><dd>−'+tl(lost)+'</dd>'+
+    '<dt>Eline geçen</dt><dd>'+tl(last.net)+'</dd>';
+
+  // yıl yıl çıkış
+  const marks=new Set([1,3,5,6,8,10,15,20,25,30,35,40,45,N]);
+  const body=rows.filter(r=>marks.has(r.t)).map(r=>
+    '<tr'+(r.t===N?' class="hit"':'')+'><td>'+r.t+'. yıl</td><td>'+tl(r.ownC)+'</td><td>'+pc(r.hv)+'</td><td>'+pc(r.sp)+'</td><td>'+tl(r.net)+'</td><td>'+tl(r.real)+'</td></tr>').join('');
+  setRows($('tbl').tBodies[0],body);
+
+  // senaryolar
+  const rets=[Math.max(0,p.ret-0.10),p.ret,p.ret+0.10];
+  const scn=rets.map((r,i)=>{
+    const l=simulate(Object.assign({},p,{ret:r}));
+    const x=l[l.length-1];
+    return '<tr'+(i===1?' class="hit"':'')+'><td>'+pc(r)+(i===1?' (seçili)':'')+'</td><td>'+tl(x.net)+'</td><td>'+tl(x.real)+'</td></tr>';
+  }).join('');
+  setRows($('scn').tBodies[0],scn);
+
+  // alternatif
+  const diff=last.net-last.altNet, diffR=last.real-last.altReal;
+  const sign=v=>(v>=0?'+':'−')+tl(Math.abs(v));
+  setRows($('cmp').tBodies[0],
+    '<tr class="hit"><td>BES (devlet katkılı)</td><td>'+tl(last.net)+'</td><td>'+tl(last.real)+'</td></tr>'+
+    '<tr><td>Alternatif (%'+nf.format(Math.round(p.alt*100))+' net)</td><td>'+tl(last.altNet)+'</td><td>'+tl(last.altReal)+'</td></tr>'+
+    '<tr><td>Fark (BES − alternatif)</td><td>'+sign(diff)+'</td><td>'+sign(diffR)+'</td></tr>');
+}
+['monthly','years','age','growth','ret','infl','alt'].forEach(id=>$(id).addEventListener('input',render));
+render();
+</script>
+
+</body>
+</html>
