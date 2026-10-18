@@ -1,0 +1,30 @@
+{
+  "tarih": "15 Ekim 2026",
+  "kaynak": "https://www.egm.org.tr",
+  "ogeler": [
+    {
+      "etiket": "Toplam katılımcı",
+      "deger": "18,35 milyon"
+    },
+    {
+      "etiket": "Toplam fon büyüklüğü",
+      "deger": "2,57 trilyon TL"
+    },
+    {
+      "etiket": "Gönüllü BES katılımcı",
+      "deger": "10,39 milyon"
+    },
+    {
+      "etiket": "Gönüllü BES fon büyüklüğü",
+      "deger": "2,41 trilyon TL"
+    },
+    {
+      "etiket": "Otomatik Katılım katılımcı",
+      "deger": "7,96 milyon"
+    },
+    {
+      "etiket": "Otomatik Katılım fon büyüklüğü",
+      "deger": "0,16 trilyon TL"
+    }
+  ]
+}

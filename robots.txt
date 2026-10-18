@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kenanemm-coder.github.io/bes-hesaplayici/sitemap.xml
