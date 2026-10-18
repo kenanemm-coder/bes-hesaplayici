@@ -99,3 +99,9 @@ a{color:var(--accent)}
 .article .cta{display:inline-block;margin-top:6px;padding:10px 16px;background:var(--accent);color:var(--accent-fg);border-radius:7px;text-decoration:none;font-weight:600}
 .foot{display:flex;flex-direction:column;gap:10px}
 
+
+/* şirket tablosu */
+.co{min-width:0}
+.co td:first-child,.co th:first-child{white-space:normal}
+.co .nm{display:block;overflow-wrap:anywhere;font-family:var(--f-body);font-size:.92rem}
+.co .bar{height:4px;background:var(--accent);border-radius:2px;margin-top:6px;min-width:2px}

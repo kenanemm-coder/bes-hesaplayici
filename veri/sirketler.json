@@ -1,0 +1,67 @@
+{
+  "tarih": "30 Eylül 2026",
+  "kaynak": "EGM, Şirket Bazında Katılımcı Sayıları (EGM-01-003)",
+  "toplam": 10373888,
+  "sirketler": [
+    {
+      "ad": "Türkiye Hayat ve Emeklilik",
+      "katilimci": 2466458
+    },
+    {
+      "ad": "Anadolu Hayat Emeklilik",
+      "katilimci": 1797117
+    },
+    {
+      "ad": "Garanti Emeklilik ve Hayat",
+      "katilimci": 1668083
+    },
+    {
+      "ad": "Allianz Yaşam ve Emeklilik",
+      "katilimci": 1345529
+    },
+    {
+      "ad": "AgeSA Hayat ve Emeklilik",
+      "katilimci": 1127777
+    },
+    {
+      "ad": "Katılım Emeklilik ve Hayat",
+      "katilimci": 681240
+    },
+    {
+      "ad": "Metlife Emeklilik ve Hayat",
+      "katilimci": 340186
+    },
+    {
+      "ad": "Zurich Yaşam ve Emeklilik",
+      "katilimci": 235114
+    },
+    {
+      "ad": "BNP Paribas Cardif Emeklilik",
+      "katilimci": 202052
+    },
+    {
+      "ad": "HDI Fiba Emeklilik ve Hayat",
+      "katilimci": 132023
+    },
+    {
+      "ad": "Axa Hayat ve Emeklilik",
+      "katilimci": 104726
+    },
+    {
+      "ad": "Bereket Emeklilik ve Hayat",
+      "katilimci": 104143
+    },
+    {
+      "ad": "Allianz Hayat ve Emeklilik",
+      "katilimci": 93040
+    },
+    {
+      "ad": "QNB Sağlık Hayat Sigorta ve Emeklilik",
+      "katilimci": 43895
+    },
+    {
+      "ad": "Viennalife Emeklilik ve Hayat",
+      "katilimci": 32505
+    }
+  ]
+}
