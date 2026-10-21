@@ -162,3 +162,10 @@ test('bağımsız referans: her katkıyı ayrı ayrı bileştirerek aynı sonuç
     }
   }
 });
+
+test('ek gider kesintisi: getiriden düşer; 0 iken sonuç değişmez', () => {
+  const p = { ...base, growth: 0.2, ret: 0.3, infl: 0.25, alt: 0.2 };
+  near(last({ ...p, fee: 0 }).net, last(p).net);
+  near(last({ ...p, fee: 0.03 }).net, last({ ...p, ret: 0.27 }).net);
+  assert.ok(last({ ...p, fee: 0.03 }).net < last(p).net);
+});

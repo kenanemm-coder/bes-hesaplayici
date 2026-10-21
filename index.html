@@ -33,6 +33,7 @@
         <div class="field"><label for="age">Bugünkü yaşın</label><div class="inp"><input id="age" type="number" inputmode="numeric" min="18" max="80" step="1" value="30" aria-describedby="err-age"><span aria-hidden="true">yaş</span></div><span class="err" id="err-age" hidden></span></div>
         <div class="field"><label for="growth">Katkıyı yıllık artırma</label><div class="inp"><input id="growth" type="number" inputmode="decimal" min="0" max="100" step="1" value="25" aria-describedby="err-growth"><span aria-hidden="true">%</span></div><span class="err" id="err-growth" hidden></span></div>
         <div class="field"><label for="ret">Yıllık fon getirisi</label><div class="inp"><input id="ret" type="number" min="-50" max="100" step="1" value="30" aria-describedby="err-ret hint-ret"><span aria-hidden="true">%</span></div><span class="hint" id="hint-ret">Giderler düşülmüş, stopaj öncesi</span><span class="err" id="err-ret" hidden></span></div>
+        <div class="field"><label for="fee">Ek yıllık gider kesintisi</label><div class="inp"><input id="fee" type="number" inputmode="decimal" min="0" max="10" step="0.1" value="0" aria-describedby="err-fee hint-fee"><span aria-hidden="true">%</span></div><span class="hint" id="hint-fee">İsteğe bağlı. Getiriyi gider düşülmeden girdiysen yaz</span><span class="err" id="err-fee" hidden></span></div>
         <div class="field"><label for="infl">Yıllık enflasyon</label><div class="inp"><input id="infl" type="number" inputmode="decimal" min="0" max="100" step="1" value="25" aria-describedby="err-infl hint-infl"><span aria-hidden="true">%</span></div><span class="hint" id="hint-infl">Bugünün parasıyla görmek için</span><span class="err" id="err-infl" hidden></span></div>
         <div class="field"><label for="alt">Alternatif net getiri</label><div class="inp"><input id="alt" type="number" min="-50" max="100" step="1" value="27" aria-describedby="err-alt hint-alt"><span aria-hidden="true">%</span></div><span class="hint" id="hint-alt">Vergi sonrası, karşılaştırma için</span><span class="err" id="err-alt" hidden></span></div>
       </div>
@@ -81,7 +82,7 @@
       <li data-rule="state">Devlet katkısı oranı %20, katkı payı üzerinden hesaplanır. Yıllık tavan 2026’da 79.272 TL, bu da 396.360 TL yıllık katkıya karşılık gelir (2026 brüt asgari ücret 33.030 TL × 12). Tavanın her yıl enflasyon kadar arttığı varsayıldı.</li>
       <li data-rule="vest">Hak ediş: 3 yılda %15, 6 yılda %35, 10 yılda %60. Emeklilik için 56 yaş ve 10 yıl şartı aranır, bu durumda %100.</li>
       <li data-rule="stopaj">Stopaj yalnızca getiri üzerinden alınır: 10 yıldan az %15, 10 yıl ve üzeri %10, emeklilikte %5. Tam 10. yıl için kaynaklar farklı yazabilir, burada %10 alındı.</li>
-      <li>Katkı her ay başında yatırılır, getiri aylık işler. Devlet katkısının yatırılma gecikmesi, giriş aidatı ve fon gider farkları hesaba katılmadı. Fon getirisi kutusuna gider düşülmüş net değeri gir.</li>
+      <li>Katkı her ay başında yatırılır, getiri aylık işler. Devlet katkısının yatırılma gecikmesi ve giriş aidatı hesaba katılmadı. Fon gideri varsayılan olarak 0; getiriyi gider düşülmeden girdiysen “Ek yıllık gider kesintisi” kutusunu kullan.</li>
       <li>Katkı artışı ve enflasyon sabit kabul edildi. Gerçekte yıldan yıla değişir.</li>
     </ul>
   </section>
@@ -109,7 +110,7 @@ function stopajRate(t,eligible){ if(eligible) return RULES.stopajRetire; let s=R
 function capContribution(){ return RULES.capYear/RULES.stateRate; }
 function simulate(p){
   const N=Math.round(p.years);
-  const m=Math.pow(1+p.ret,1/12)-1, ma=Math.pow(1+p.alt,1/12)-1;
+  const m=Math.pow(1+p.ret-(p.fee||0),1/12)-1, ma=Math.pow(1+p.alt,1/12)-1;
   let own=0,ownC=0,st=0,stC=0,alt=0;
   const rows=[];
   for(let k=1;k<=N*12;k++){
@@ -160,6 +161,7 @@ const FIELDS={
   age:{lo:18,hi:80,def:30,int:true,name:'Yaş',unit:'yaş'},
   growth:{lo:0,hi:100,def:25,int:false,name:'Katkı artışı',unit:'%'},
   ret:{lo:-50,hi:100,def:30,int:false,name:'Fon getirisi',unit:'%'},
+  fee:{lo:0,hi:10,def:0,int:false,name:'Gider kesintisi',unit:'%'},
   infl:{lo:0,hi:100,def:25,int:false,name:'Enflasyon',unit:'%'},
   alt:{lo:-50,hi:100,def:27,int:false,name:'Alternatif getiri',unit:'%'}
 };
@@ -185,7 +187,7 @@ function readParams(){
     else { errors.push({id,name:f.name,msg:r.msg}); er.hidden=false; er.textContent=r.msg; inp.setAttribute('aria-invalid','true'); inp.parentNode.classList.add('invalid'); }
     v[id]=lastGood[id];
   }
-  return {p:{monthly:v.monthly,years:v.years,age:v.age,growth:v.growth/100,ret:v.ret/100,infl:v.infl/100,alt:v.alt/100},errors};
+  return {p:{monthly:v.monthly,years:v.years,age:v.age,growth:v.growth/100,ret:v.ret/100,fee:v.fee/100,infl:v.infl/100,alt:v.alt/100},errors};
 }
 function setRows(tbody,html){tbody.innerHTML=html;}
 let announceT;
@@ -254,7 +256,7 @@ function safeRender(){
   const s=document.querySelector('.stamp'); if(s) s.textContent=t.stamp;
   for(const k of ['state','vest','stopaj']){ const li=document.querySelector('li[data-rule="'+k+'"]'); if(li) li.textContent=t[k]; }
 })();
-['monthly','years','age','growth','ret','infl','alt'].forEach(id=>$(id).addEventListener('input',safeRender));
+['monthly','years','age','growth','ret','fee','infl','alt'].forEach(id=>$(id).addEventListener('input',safeRender));
 safeRender();
 
 fetch('veri/egm.json').then(r=>r.ok?r.json():null).then(d=>{
