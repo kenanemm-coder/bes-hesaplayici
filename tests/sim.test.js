@@ -9,8 +9,8 @@ const path = require('node:path');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const m = html.match(/\/\*SIM_START\*\/([\s\S]*?)\/\*SIM_END\*\//);
 assert.ok(m, 'SIM bloğu index.html içinde bulunamadı');
-const { RULES, vestShare, stopajRate, simulate } =
-  new Function(m[1] + '; return {RULES, vestShare, stopajRate, simulate};')();
+const { RULES, vestShare, stopajRate, simulate, ruleTexts, capContribution } =
+  new Function(m[1] + '; return {RULES, vestShare, stopajRate, simulate, ruleTexts, capContribution};')();
 
 const base = { monthly: 2500, years: 25, age: 30, growth: 0, ret: 0, infl: 0, alt: 0 };
 const last = (p) => { const r = simulate(p); return r[r.length - 1]; };
@@ -88,4 +88,40 @@ test('getiri yokken stopaj matrahı sıfır, ana para kaybı olmaz', () => {
 test('yüksek getiri ve uzun süre: sonuçlar sonlu kalır', () => {
   const r = last({ monthly: 10000000, years: 45, age: 18, growth: 2, ret: 2, infl: 0, alt: 2 });
   for (const [k, v] of Object.entries(r)) if (typeof v === 'number') assert.ok(Number.isFinite(v), k + ' sonlu olmalı');
+});
+
+test('negatif fon getirisi: sonuçlar sonlu, stopaj matrahı sıfır, değer katkının altında', () => {
+  const r = last({ ...base, ret: -0.10, alt: -0.05, years: 10, age: 18 });
+  for (const [k, v] of Object.entries(r)) if (typeof v === 'number') assert.ok(Number.isFinite(v), k);
+  assert.ok(r.own < r.ownC);
+  near(r.ownNet, r.own);            // zararda stopaj yok
+});
+
+test('kural parametreleri RULES bloğundan değiştirilebilir (hak ediş, stopaj, tavan)', () => {
+  const saved = JSON.stringify(RULES);
+  try {
+    RULES.vesting = [[2, 0.5], [4, 0.8]];
+    assert.equal(vestShare(1, false), 0); assert.equal(vestShare(2, false), 0.5);
+    assert.equal(vestShare(4, false), 0.8); assert.equal(vestShare(20, false), 0.8);
+    RULES.stopajBase = 0.20; RULES.stopajTiers = [[5, 0.12]]; RULES.stopajRetire = 0.03;
+    assert.equal(stopajRate(4, false), 0.20); assert.equal(stopajRate(5, false), 0.12);
+    assert.equal(stopajRate(5, true), 0.03);
+    RULES.capYear = 100000; RULES.stateRate = 0.25;
+    assert.equal(capContribution(), 400000);
+    near(last({ ...base, monthly: 100000, years: 1 }).stC, 100000);   // yeni tavan uygulanır
+  } finally { Object.assign(RULES, JSON.parse(saved)); }
+});
+
+test('hak ediş kademeleri artan sırada tanımlı', () => {
+  const ys = RULES.vesting.map(v => v[0]);
+  assert.deepEqual(ys, [...ys].sort((a, b) => a - b));
+});
+
+test('tavan katkı tutarı 396.360 TL', () => { near(capContribution(), 396360); });
+
+test('sayfadaki sabit yedek metinler RULES ile birebir aynı', () => {
+  const t = ruleTexts();
+  for (const k of ['state', 'vest', 'stopaj'])
+    assert.ok(html.includes('<li data-rule="' + k + '">' + t[k] + '</li>'), k + ' metni RULES ile uyuşmuyor');
+  assert.ok(html.includes('<p class="stamp">' + t.stamp + '</p>'), 'damga metni uyuşmuyor');
 });

@@ -28,41 +28,44 @@
     <section class="panel" aria-labelledby="h-in">
       <h2 id="h-in">Bilgilerin</h2>
       <div class="fields">
-        <div class="field"><label for="monthly">Aylık katkı payı</label><div class="inp"><input id="monthly" type="number" inputmode="decimal" min="0" step="100" value="2500"><span>TL</span></div></div>
-        <div class="field"><label for="years">Süre</label><div class="inp"><input id="years" type="number" inputmode="numeric" min="1" max="45" step="1" value="25"><span>yıl</span></div></div>
-        <div class="field"><label for="age">Bugünkü yaşın</label><div class="inp"><input id="age" type="number" inputmode="numeric" min="18" max="80" step="1" value="30"><span>yaş</span></div></div>
-        <div class="field"><label for="growth">Katkıyı yıllık artırma</label><div class="inp"><input id="growth" type="number" inputmode="decimal" min="0" max="200" step="1" value="25"><span>%</span></div></div>
-        <div class="field"><label for="ret">Yıllık fon getirisi</label><div class="inp"><input id="ret" type="number" inputmode="decimal" min="0" max="200" step="1" value="30"><span>%</span></div><span class="hint">Giderler düşülmüş, stopaj öncesi</span></div>
-        <div class="field"><label for="infl">Yıllık enflasyon</label><div class="inp"><input id="infl" type="number" inputmode="decimal" min="0" max="200" step="1" value="25"><span>%</span></div><span class="hint">Bugünün parasıyla görmek için</span></div>
-        <div class="field"><label for="alt">Alternatif net getiri</label><div class="inp"><input id="alt" type="number" inputmode="decimal" min="0" max="200" step="1" value="27"><span>%</span></div><span class="hint">Vergi sonrası, karşılaştırma için</span></div>
+        <div class="field"><label for="monthly">Aylık katkı payı</label><div class="inp"><input id="monthly" type="number" inputmode="decimal" min="0" max="1000000" step="100" value="2500" aria-describedby="err-monthly"><span aria-hidden="true">TL</span></div><span class="err" id="err-monthly" hidden></span></div>
+        <div class="field"><label for="years">Süre</label><div class="inp"><input id="years" type="number" inputmode="numeric" min="1" max="45" step="1" value="25" aria-describedby="err-years"><span aria-hidden="true">yıl</span></div><span class="err" id="err-years" hidden></span></div>
+        <div class="field"><label for="age">Bugünkü yaşın</label><div class="inp"><input id="age" type="number" inputmode="numeric" min="18" max="80" step="1" value="30" aria-describedby="err-age"><span aria-hidden="true">yaş</span></div><span class="err" id="err-age" hidden></span></div>
+        <div class="field"><label for="growth">Katkıyı yıllık artırma</label><div class="inp"><input id="growth" type="number" inputmode="decimal" min="0" max="100" step="1" value="25" aria-describedby="err-growth"><span aria-hidden="true">%</span></div><span class="err" id="err-growth" hidden></span></div>
+        <div class="field"><label for="ret">Yıllık fon getirisi</label><div class="inp"><input id="ret" type="number" min="-50" max="100" step="1" value="30" aria-describedby="err-ret hint-ret"><span aria-hidden="true">%</span></div><span class="hint" id="hint-ret">Giderler düşülmüş, stopaj öncesi</span><span class="err" id="err-ret" hidden></span></div>
+        <div class="field"><label for="infl">Yıllık enflasyon</label><div class="inp"><input id="infl" type="number" inputmode="decimal" min="0" max="100" step="1" value="25" aria-describedby="err-infl hint-infl"><span aria-hidden="true">%</span></div><span class="hint" id="hint-infl">Bugünün parasıyla görmek için</span><span class="err" id="err-infl" hidden></span></div>
+        <div class="field"><label for="alt">Alternatif net getiri</label><div class="inp"><input id="alt" type="number" min="-50" max="100" step="1" value="27" aria-describedby="err-alt hint-alt"><span aria-hidden="true">%</span></div><span class="hint" id="hint-alt">Vergi sonrası, karşılaştırma için</span><span class="err" id="err-alt" hidden></span></div>
       </div>
     </section>
 
-    <section class="panel result" aria-live="polite" aria-labelledby="h-out">
+    <section class="panel result" aria-labelledby="h-out">
       <h2 id="h-out" class="big-label" style="font-family:var(--f-body);font-weight:400;font-size:.85rem;margin:0">Çıkışta eline geçecek (vergi ve hak ediş sonrası)</h2>
+      <noscript><div class="note">Hesaplayıcı çalışmak için JavaScript gerektirir. Tarayıcında JavaScript'i açıp sayfayı yenile.</div></noscript>
+      <div class="note" id="jsfail" role="alert" hidden>Hesaplayıcı çalışmadı. Sayfayı yenile; sorun sürerse tarayıcında JavaScript'in açık olduğundan emin ol.</div>
       <div class="big" id="net">–</div>
       <p class="real" id="real"></p>
       <div class="notes" id="notes"></div>
       <dl class="rows" id="rows"></dl>
+      <p class="sr-only" id="sr" role="status" aria-live="polite"></p>
     </section>
   </div>
 
   <section class="sec">
     <h2>Yıl yıl çıkış</h2>
     <p>Aynı hesaptan hangi yılda çıkarsan ne alırsın. Devlet katkısı 3 yıldan önce hiç ödenmez, sonra kademeli ödenir. Seçtiğin süre vurgulu satırdır.</p>
-    <div class="tablewrap"><table id="tbl"><thead><tr><th>Yıl</th><th>Yatırdığın</th><th>Devlet kat. hak ediş</th><th>Stopaj</th><th>Eline geçen</th><th>Bugünün parası</th></tr></thead><tbody></tbody></table></div>
+    <div class="tablewrap"><table id="tbl"><caption class="sr-only">Çıkış yılına göre hak ediş, stopaj ve eline geçen tutar</caption><thead><tr><th scope="col">Yıl</th><th scope="col">Yatırdığın</th><th scope="col">Devlet kat. hak ediş</th><th scope="col">Stopaj</th><th scope="col">Eline geçen</th><th scope="col">Bugünün parası</th></tr></thead><tbody></tbody></table></div>
   </section>
 
   <section class="sec">
     <h2>Getiri senaryoları</h2>
     <p>Aynı katkı ve süre için getiri 10 puan düşük ve 10 puan yüksek olsaydı. Geçmiş getiri gelecek getirinin garantisi değildir.</p>
-    <div class="tablewrap"><table id="scn"><thead><tr><th>Yıllık getiri</th><th>Eline geçen</th><th>Bugünün parası</th></tr></thead><tbody></tbody></table></div>
+    <div class="tablewrap"><table id="scn"><caption class="sr-only">Üç farklı getiri senaryosunda çıkış tutarı</caption><thead><tr><th scope="col">Yıllık getiri</th><th scope="col">Eline geçen</th><th scope="col">Bugünün parası</th></tr></thead><tbody></tbody></table></div>
   </section>
 
   <section class="sec">
     <h2>BES ile alternatifin farkı</h2>
     <p>Aynı aylık katkıyı, girdiğin net getiriyle (vergi sonrası) ayrı bir yerde biriktirseydin. Bu karşılaştırma bir öneri değildir, sadece rakamları yan yana koyar.</p>
-    <div class="tablewrap"><table id="cmp"><thead><tr><th>Seçenek</th><th>Süre sonunda</th><th>Bugünün parası</th></tr></thead><tbody></tbody></table></div>
+    <div class="tablewrap"><table id="cmp"><caption class="sr-only">BES ile alternatifin karşılaştırması</caption><thead><tr><th scope="col">Seçenek</th><th scope="col">Süre sonunda</th><th scope="col">Bugünün parası</th></tr></thead><tbody></tbody></table></div>
   </section>
 
   <section class="sec" id="rakamlar">
@@ -74,10 +77,10 @@
 
   <section class="sec">
     <h2>Hesabın varsayımları</h2>
-    <ul class="plain">
-      <li>Devlet katkısı katkı payının %20'si. Yıllık tavan 2026'da 79.272 TL (yıllık brüt asgari ücretin %20'si, yani 396.360 TL katkıya karşılık gelir). Tavanın her yıl enflasyon kadar arttığı varsayıldı.</li>
-      <li>Hak ediş: 3 yılda %15, 6 yılda %35, 10 yılda %60. Emeklilik için 56 yaş ve 10 yıl şartı aranır, bu durumda %100.</li>
-      <li>Stopaj yalnızca getiri üzerinden alınır: 10 yıldan az %15, 10 yıl ve üzeri %10, emeklilikte %5. Tam 10. yıl için kaynaklar farklı yazabilir, burada %10 alındı.</li>
+    <ul class="plain" id="assump">
+      <li data-rule="state">Devlet katkısı oranı %20, katkı payı üzerinden hesaplanır. Yıllık tavan 2026’da 79.272 TL, bu da 396.360 TL yıllık katkıya karşılık gelir. Tavanın her yıl enflasyon kadar arttığı varsayıldı.</li>
+      <li data-rule="vest">Hak ediş: 3 yılda %15, 6 yılda %35, 10 yılda %60. Emeklilik için 56 yaş ve 10 yıl şartı aranır, bu durumda %100.</li>
+      <li data-rule="stopaj">Stopaj yalnızca getiri üzerinden alınır: 10 yıldan az %15, 10 yıl ve üzeri %10, emeklilikte %5. Tam 10. yıl için kaynaklar farklı yazabilir, burada %10 alındı.</li>
       <li>Katkı her ay başında yatırılır, getiri aylık işler. Devlet katkısının yatırılma gecikmesi, giriş aidatı ve fon gider farkları hesaba katılmadı. Fon getirisi kutusuna gider düşülmüş net değeri gir.</li>
       <li>Katkı artışı ve enflasyon sabit kabul edildi. Gerçekte yıldan yıla değişir.</li>
     </ul>
@@ -86,11 +89,23 @@
   <p class="disc">Bu araç bilgilendirme amaçlıdır, yatırım, vergi veya hukuk tavsiyesi değildir. Kurallar değişebilir, 2026 başında devlet katkısı %30'dan %20'ye indi. Karar vermeden önce sözleşmeni ve güncel mevzuatı kontrol et. Kaynaklar: <a href="https://www.turkiyesigorta.com.tr/bireysel-emeklilik/devlet-katkisi" target="_blank" rel="noopener">Türkiye Sigorta, devlet katkısı</a> · <a href="https://www.ey.com/tr_tr/insights/tax/bes-devlet-katkisi-vergi-oranlari" target="_blank" rel="noopener">EY, devlet katkısı ve vergi oranları</a> Bu sitede çerezsiz ziyaret istatistiği (Cloudflare Web Analytics) kullanılır, kişisel veri toplanmaz.</p>
 </div>
 
+<script>window.addEventListener('load',function(){if(!window.__besReady){var e=document.getElementById('jsfail');if(e)e.hidden=false;}});</script>
 <script>
 /*SIM_START*/
-const RULES={stateRate:0.20,capYear:79272,retireAge:56,retireYears:10};
-function vestShare(t,eligible){ if(eligible) return 1; if(t>=10) return 0.60; if(t>=6) return 0.35; if(t>=3) return 0.15; return 0; }
-function stopajRate(t,eligible){ if(eligible) return 0.05; if(t>=10) return 0.10; return 0.15; }
+const RULES={
+  stateRate:0.20,            // devlet katkısı oranı (katkı payı üzerinden)
+  capYear:79272,             // yıllık devlet katkısı tavanı (TL, 2026)
+  retireAge:56, retireYears:10,
+  vesting:[[3,0.15],[6,0.35],[10,0.60]],   // [tamamlanan yıl, devlet katkısı hak ediş payı], artan sırada
+  stopajBase:0.15,           // getiri stopajı: varsayılan (10 yıldan az)
+  stopajTiers:[[10,0.10]],   // [tamamlanan yıl, oran]: bu yıl ve üzeri
+  stopajRetire:0.05,         // emeklilikte
+  checked:'18.10.2026',      // kuralların son kontrol tarihi
+  maxDisplay:1e15            // bunun üstündeki sonuç gerçekçi sayılmaz
+};
+function vestShare(t,eligible){ if(eligible) return 1; let v=0; for(const [y,r] of RULES.vesting) if(t>=y) v=r; return v; }
+function stopajRate(t,eligible){ if(eligible) return RULES.stopajRetire; let s=RULES.stopajBase; for(const [y,r] of RULES.stopajTiers) if(t>=y) s=r; return s; }
+function capContribution(){ return RULES.capYear/RULES.stateRate; }
 function simulate(p){
   const N=Math.round(p.years);
   const m=Math.pow(1+p.ret,1/12)-1, ma=Math.pow(1+p.alt,1/12)-1;
@@ -118,49 +133,90 @@ function simulate(p){
   }
   return rows;
 }
+function fmtN(n){ return Math.round(n).toLocaleString('tr-TR',{maximumFractionDigits:0}); }
+function pctS(x){ return '%'+fmtN(x*100); }
+function ruleTexts(){
+  const vest=RULES.vesting.map(([y,r])=>y+' yılda '+pctS(r)).join(', ');
+  const [ty,tr]=RULES.stopajTiers[0];
+  return {
+    stamp:'2026 kuralları · devlet katkısı '+pctS(RULES.stateRate)+' · son kontrol '+RULES.checked,
+    state:'Devlet katkısı oranı '+pctS(RULES.stateRate)+', katkı payı üzerinden hesaplanır. Yıllık tavan 2026’da '+fmtN(RULES.capYear)+' TL, bu da '+fmtN(capContribution())+' TL yıllık katkıya karşılık gelir. Tavanın her yıl enflasyon kadar arttığı varsayıldı.',
+    vest:'Hak ediş: '+vest+'. Emeklilik için '+RULES.retireAge+' yaş ve '+RULES.retireYears+' yıl şartı aranır, bu durumda %100.',
+    stopaj:'Stopaj yalnızca getiri üzerinden alınır: '+ty+' yıldan az '+pctS(RULES.stopajBase)+', '+ty+' yıl ve üzeri '+pctS(tr)+', emeklilikte '+pctS(RULES.stopajRetire)+'. Tam '+ty+'. yıl için kaynaklar farklı yazabilir, burada '+pctS(tr)+' alındı.'
+  };
+}
 /*SIM_END*/
 
 const nf=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:0});
-const tl=n=>nf.format(Math.round(n))+' TL';
-const pc=n=>'%'+nf.format(Math.round(n*100));
+const tl=n=>!isFinite(n)?'–':(n>=RULES.maxDisplay?'1 katrilyon TL üzeri':nf.format(Math.round(n))+' TL');
+const pc=n=>(n<0?'−':'')+'%'+nf.format(Math.abs(Math.round(n*100)));
 const $=id=>document.getElementById(id);
-const num=(id,lo,hi,def)=>{let v=parseFloat(String($(id).value).replace(',','.'));if(!isFinite(v))v=def;return Math.min(hi,Math.max(lo,v));};
 
+// Alan tanımları: sınırlar, tür ve hata metni için tek yer
+const FIELDS={
+  monthly:{lo:0,hi:1000000,def:2500,int:false,name:'Aylık katkı',unit:'TL'},
+  years:{lo:1,hi:45,def:25,int:true,name:'Süre',unit:'yıl'},
+  age:{lo:18,hi:80,def:30,int:true,name:'Yaş',unit:'yaş'},
+  growth:{lo:0,hi:100,def:25,int:false,name:'Katkı artışı',unit:'%'},
+  ret:{lo:-50,hi:100,def:30,int:false,name:'Fon getirisi',unit:'%'},
+  infl:{lo:0,hi:100,def:25,int:false,name:'Enflasyon',unit:'%'},
+  alt:{lo:-50,hi:100,def:27,int:false,name:'Alternatif getiri',unit:'%'}
+};
+const lastGood={}; Object.keys(FIELDS).forEach(k=>{lastGood[k]=FIELDS[k].def;});
+const lim=(f,v)=>f.unit==='%'?(v<0?'−':'')+'%'+nf.format(Math.abs(v)):nf.format(v)+' '+f.unit;
+
+function checkField(id){
+  const f=FIELDS[id], el=$(id), raw=String(el.value).trim().replace(',','.');
+  if(el.validity&&el.validity.badInput) return {ok:false,msg:'Geçerli bir sayı gir.'};
+  if(raw==='') return {ok:false,msg:f.name+' boş bırakılamaz.'};
+  const v=Number(raw);
+  if(!isFinite(v)) return {ok:false,msg:'Geçerli bir sayı gir.'};
+  if(f.int&&!Number.isInteger(v)) return {ok:false,msg:'Tam sayı gir.'};
+  if(v<f.lo) return {ok:false,msg:'En az '+lim(f,f.lo)+' olabilir.'};
+  if(v>f.hi) return {ok:false,msg:'En fazla '+lim(f,f.hi)+' olabilir.'};
+  return {ok:true,v};
+}
 function readParams(){
-  return {
-    monthly:num('monthly',0,10000000,2500),
-    years:num('years',1,45,25),
-    age:num('age',18,80,30),
-    growth:num('growth',0,200,25)/100,
-    ret:num('ret',0,200,30)/100,
-    infl:num('infl',0,200,25)/100,
-    alt:num('alt',0,200,27)/100
-  };
+  const errors=[], v={};
+  for(const id of Object.keys(FIELDS)){
+    const r=checkField(id), f=FIELDS[id], er=$('err-'+id), inp=$(id);
+    if(r.ok){ lastGood[id]=r.v; er.hidden=true; er.textContent=''; inp.removeAttribute('aria-invalid'); inp.parentNode.classList.remove('invalid'); }
+    else { errors.push({id,name:f.name,msg:r.msg}); er.hidden=false; er.textContent=r.msg; inp.setAttribute('aria-invalid','true'); inp.parentNode.classList.add('invalid'); }
+    v[id]=lastGood[id];
+  }
+  return {p:{monthly:v.monthly,years:v.years,age:v.age,growth:v.growth/100,ret:v.ret/100,infl:v.infl/100,alt:v.alt/100},errors};
 }
 function setRows(tbody,html){tbody.innerHTML=html;}
+let announceT;
+function announce(msg){ clearTimeout(announceT); announceT=setTimeout(()=>{$('sr').textContent=msg;},800); }
 
 function render(){
-  const p=readParams();
+  const {p,errors}=readParams();
   const rows=simulate(p);
   const N=rows.length, last=rows[N-1];
+  const R=Math.round;
   $('net').textContent=tl(last.net);
   $('real').innerHTML='Bugünün parasıyla yaklaşık <b>'+tl(last.real)+'</b>';
 
   const notes=[];
+  if(errors.length) notes.push(['','Geçersiz değer var: '+errors.map(e=>e.name).join(', ')+'. Sonuç bu alanların son geçerli değerleriyle gösteriliyor.']);
   const ageEnd=Math.round(p.age+N);
-  if(N<3) notes.push(['','3 yıldan önce çıkarsan devlet katkısı hiç ödenmez.']);
-  if(last.elig) notes.push(['ok','Emeklilik şartı sağlanıyor ('+ageEnd+' yaş, '+N+' yıl). Devlet katkısı tamamen ödenir, stopaj %5.']);
-  else notes.push(['','Emeklilik şartı (56 yaş ve 10 yıl) bu senaryoda sağlanmıyor, '+ageEnd+' yaşında çıkış var. Devlet katkısının '+pc(last.hv)+' kadarı ödenir, stopaj '+pc(last.sp)+'.']);
-  if(p.monthly*12>396360) notes.push(['','Yıllık katkın '+tl(p.monthly*12)+', devlet katkısı tavanını aşıyor. İlk yıl için tavan 79.272 TL, bu 396.360 TL katkıya denk gelir. Fazlası ek devlet katkısı getirmez.']);
+  if(N<RULES.vesting[0][0]) notes.push(['','3 yıldan önce çıkarsan devlet katkısı hiç ödenmez.']);
+  if(last.elig) notes.push(['ok','Emeklilik şartı sağlanıyor ('+ageEnd+' yaş, '+N+' yıl). Devlet katkısı tamamen ödenir, stopaj '+pc(RULES.stopajRetire)+'.']);
+  else notes.push(['','Emeklilik şartı ('+RULES.retireAge+' yaş ve '+RULES.retireYears+' yıl) bu senaryoda sağlanmıyor, '+ageEnd+' yaşında çıkış var. Devlet katkısının '+pc(last.hv)+' kadarı ödenir, stopaj '+pc(last.sp)+'.']);
+  if(ageEnd>100) notes.push(['','Çıkış yaşı '+ageEnd+' görünüyor. Yaş ve süre değerlerini kontrol et.']);
+  if(p.monthly*12>capContribution()) notes.push(['','Yıllık katkın '+tl(p.monthly*12)+', devlet katkısı tavanını aşıyor. İlk yıl için tavan '+nf.format(RULES.capYear)+' TL, bu '+nf.format(capContribution())+' TL katkıya denk gelir. Fazlası ek devlet katkısı getirmez.']);
+  if(last.net>=RULES.maxDisplay) notes.push(['','Bu değerlerle sonuç gerçekçi olmayan bir büyüklüğe ulaşıyor. Oranları ve süreyi kontrol et.']);
   $('notes').innerHTML=notes.map(n=>'<div class="note '+n[0]+'">'+n[1]+'</div>').join('');
 
-  const lost=(last.own+last.st)-last.net;
+  // Özet satırları: ekrandaki yuvarlanmış tutarlar birbiriyle tutarlı (brüt − kayıp = eline geçen)
+  const gross=R(last.own+last.st), netR=R(last.net), lostR=gross-netR;
   $('rows').innerHTML=
     '<dt>Toplam yatırdığın katkı</dt><dd>'+tl(last.ownC)+'</dd>'+
     '<dt>Yatan devlet katkısı</dt><dd>'+tl(last.stC)+'</dd>'+
-    '<dt>Hesapta biriken (brüt)</dt><dd>'+tl(last.own+last.st)+'</dd>'+
-    '<dt>Stopaj ve hak edilmeyen kısım</dt><dd>−'+tl(lost)+'</dd>'+
-    '<dt>Eline geçen</dt><dd>'+tl(last.net)+'</dd>';
+    '<dt>Hesapta biriken (brüt)</dt><dd>'+tl(gross)+'</dd>'+
+    '<dt>Stopaj ve hak edilmeyen kısım</dt><dd>−'+tl(lostR)+'</dd>'+
+    '<dt>Eline geçen</dt><dd>'+tl(netR)+'</dd>';
 
   // yıl yıl çıkış
   const marks=new Set([1,3,5,6,8,10,15,20,25,30,35,40,45,N]);
@@ -169,7 +225,7 @@ function render(){
   setRows($('tbl').tBodies[0],body);
 
   // senaryolar
-  const rets=[Math.max(0,p.ret-0.10),p.ret,p.ret+0.10];
+  const rets=[Math.max(-0.5,p.ret-0.10),p.ret,p.ret+0.10];
   const scn=rets.map((r,i)=>{
     const l=simulate(Object.assign({},p,{ret:r}));
     const x=l[l.length-1];
@@ -182,11 +238,23 @@ function render(){
   const sign=v=>(v>=0?'+':'−')+tl(Math.abs(v));
   setRows($('cmp').tBodies[0],
     '<tr class="hit"><td>BES (devlet katkılı)</td><td>'+tl(last.net)+'</td><td>'+tl(last.real)+'</td></tr>'+
-    '<tr><td>Alternatif (%'+nf.format(Math.round(p.alt*100))+' net)</td><td>'+tl(last.altNet)+'</td><td>'+tl(last.altReal)+'</td></tr>'+
+    '<tr><td>Alternatif ('+pc(p.alt)+' net)</td><td>'+tl(last.altNet)+'</td><td>'+tl(last.altReal)+'</td></tr>'+
     '<tr><td>Fark (BES − alternatif)</td><td>'+sign(diff)+'</td><td>'+sign(diffR)+'</td></tr>');
+
+  announce('Çıkışta eline geçecek '+tl(last.net)+'. Bugünün parasıyla yaklaşık '+tl(last.real)+'.');
 }
-['monthly','years','age','growth','ret','infl','alt'].forEach(id=>$(id).addEventListener('input',render));
-render();
+function safeRender(){
+  try{ render(); $('jsfail').hidden=true; window.__besReady=true; }
+  catch(e){ $('jsfail').hidden=false; $('net').textContent='–'; if(window.console)console.error(e); }
+}
+// Varsayımlar ve damga metni kural değerlerinden üretilir
+(function(){
+  const t=ruleTexts();
+  const s=document.querySelector('.stamp'); if(s) s.textContent=t.stamp;
+  for(const k of ['state','vest','stopaj']){ const li=document.querySelector('li[data-rule="'+k+'"]'); if(li) li.textContent=t[k]; }
+})();
+['monthly','years','age','growth','ret','infl','alt'].forEach(id=>$(id).addEventListener('input',safeRender));
+safeRender();
 
 fetch('veri/egm.json').then(r=>r.ok?r.json():null).then(d=>{
   if(!d||!Array.isArray(d.ogeler))return;

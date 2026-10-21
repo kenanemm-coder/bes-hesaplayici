@@ -105,3 +105,10 @@ a{color:var(--accent)}
 .co td:first-child,.co th:first-child{white-space:normal}
 .co .nm{display:block;overflow-wrap:anywhere;font-family:var(--f-body);font-size:.92rem}
 .co .bar{height:4px;background:var(--accent);border-radius:2px;margin-top:6px;min-width:2px}
+
+/* erişilebilirlik ve giriş denetimi */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.err{font-size:.78rem;font-weight:500;color:var(--warn)}
+.inp.invalid{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn)}
+dl.rows dd{overflow-wrap:anywhere;min-width:0}
+dl.rows dt{min-width:0}
