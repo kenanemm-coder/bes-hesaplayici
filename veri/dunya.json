@@ -1,0 +1,21 @@
+{
+  "guncelleme": "21 Ekim 2026",
+  "kaynak_tai": "Thinking Ahead Institute (WTW), Global Pension Assets Study 2026; 2025 sonu tahminleri, 22 büyük pazar (P22)",
+  "p22_toplam_mlr_usd": 68274,
+  "p22_onceki_yil_mlr_usd": 62313,
+  "ulkeler": [
+    {"ad": "ABD", "varlik_mlr_usd": 44919, "gsyh_orani": null},
+    {"ad": "Kanada", "varlik_mlr_usd": 3777, "gsyh_orani": 165.4},
+    {"ad": "Japonya", "varlik_mlr_usd": 3390, "gsyh_orani": null},
+    {"ad": "Birleşik Krallık", "varlik_mlr_usd": 3239, "gsyh_orani": null},
+    {"ad": "Avustralya", "varlik_mlr_usd": 2972, "gsyh_orani": 162.5},
+    {"ad": "Hollanda", "varlik_mlr_usd": 1942, "gsyh_orani": 147.0, "yaklasik": true},
+    {"ad": "İsviçre", "varlik_mlr_usd": 1736, "gsyh_orani": 173.2}
+  ],
+  "turkiye": {
+    "gsyh_2025_tl": 63240524000000,
+    "gsyh_kaynak": "TÜİK, 31 Ağustos 2026 (cari fiyatlarla 2025 GSYH)",
+    "bes_fon_2026_tl": 2120948307100,
+    "bes_fon_2025_tl": null
+  }
+}
