@@ -14,7 +14,7 @@
   <header>
     <h1>BES Hesaplayıcı</h1>
     <p class="lead">Aylık katkına göre devlet katkısını, erken çıkışta kaybedeceğin tutarı ve vergi sonrası eline geçecek parayı hesapla. Başlangıç değerleri örnektir, kendi bilgilerinle değiştir.</p>
-    <p class="stamp">2026 kuralları · devlet katkısı %20 · son kontrol 18.10.2026</p>
+    <p class="stamp">2026 kuralları · devlet katkısı %20 · son kontrol 21.10.2026</p>
     <nav class="nav" aria-label="Ana menü">
       <a href="./" aria-current="page">Hesaplayıcı</a>
       <a href="degisiklik-2026.html">2026'da ne değişti</a>
@@ -78,7 +78,7 @@
   <section class="sec">
     <h2>Hesabın varsayımları</h2>
     <ul class="plain" id="assump">
-      <li data-rule="state">Devlet katkısı oranı %20, katkı payı üzerinden hesaplanır. Yıllık tavan 2026’da 79.272 TL, bu da 396.360 TL yıllık katkıya karşılık gelir. Tavanın her yıl enflasyon kadar arttığı varsayıldı.</li>
+      <li data-rule="state">Devlet katkısı oranı %20, katkı payı üzerinden hesaplanır. Yıllık tavan 2026’da 79.272 TL, bu da 396.360 TL yıllık katkıya karşılık gelir (2026 brüt asgari ücret 33.030 TL × 12). Tavanın her yıl enflasyon kadar arttığı varsayıldı.</li>
       <li data-rule="vest">Hak ediş: 3 yılda %15, 6 yılda %35, 10 yılda %60. Emeklilik için 56 yaş ve 10 yıl şartı aranır, bu durumda %100.</li>
       <li data-rule="stopaj">Stopaj yalnızca getiri üzerinden alınır: 10 yıldan az %15, 10 yıl ve üzeri %10, emeklilikte %5. Tam 10. yıl için kaynaklar farklı yazabilir, burada %10 alındı.</li>
       <li>Katkı her ay başında yatırılır, getiri aylık işler. Devlet katkısının yatırılma gecikmesi, giriş aidatı ve fon gider farkları hesaba katılmadı. Fon getirisi kutusuna gider düşülmüş net değeri gir.</li>
@@ -100,7 +100,8 @@ const RULES={
   stopajBase:0.15,           // getiri stopajı: varsayılan (10 yıldan az)
   stopajTiers:[[10,0.10]],   // [tamamlanan yıl, oran]: bu yıl ve üzeri
   stopajRetire:0.05,         // emeklilikte
-  checked:'18.10.2026',      // kuralların son kontrol tarihi
+  minWageMonth:33030,       // 2026 aylık brüt asgari ücret (tavan = yıllık brüt asgari ücretin %20'si)
+  checked:'21.10.2026',      // kuralların son kontrol tarihi
   maxDisplay:1e15            // bunun üstündeki sonuç gerçekçi sayılmaz
 };
 function vestShare(t,eligible){ if(eligible) return 1; let v=0; for(const [y,r] of RULES.vesting) if(t>=y) v=r; return v; }
@@ -140,7 +141,7 @@ function ruleTexts(){
   const [ty,tr]=RULES.stopajTiers[0];
   return {
     stamp:'2026 kuralları · devlet katkısı '+pctS(RULES.stateRate)+' · son kontrol '+RULES.checked,
-    state:'Devlet katkısı oranı '+pctS(RULES.stateRate)+', katkı payı üzerinden hesaplanır. Yıllık tavan 2026’da '+fmtN(RULES.capYear)+' TL, bu da '+fmtN(capContribution())+' TL yıllık katkıya karşılık gelir. Tavanın her yıl enflasyon kadar arttığı varsayıldı.',
+    state:'Devlet katkısı oranı '+pctS(RULES.stateRate)+', katkı payı üzerinden hesaplanır. Yıllık tavan 2026’da '+fmtN(RULES.capYear)+' TL, bu da '+fmtN(capContribution())+' TL yıllık katkıya karşılık gelir (2026 brüt asgari ücret '+fmtN(RULES.minWageMonth)+' TL × 12). Tavanın her yıl enflasyon kadar arttığı varsayıldı.',
     vest:'Hak ediş: '+vest+'. Emeklilik için '+RULES.retireAge+' yaş ve '+RULES.retireYears+' yıl şartı aranır, bu durumda %100.',
     stopaj:'Stopaj yalnızca getiri üzerinden alınır: '+ty+' yıldan az '+pctS(RULES.stopajBase)+', '+ty+' yıl ve üzeri '+pctS(tr)+', emeklilikte '+pctS(RULES.stopajRetire)+'. Tam '+ty+'. yıl için kaynaklar farklı yazabilir, burada '+pctS(tr)+' alındı.'
   };

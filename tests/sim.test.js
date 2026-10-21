@@ -125,3 +125,40 @@ test('sayfadaki sabit yedek metinler RULES ile birebir aynı', () => {
     assert.ok(html.includes('<li data-rule="' + k + '">' + t[k] + '</li>'), k + ' metni RULES ile uyuşmuyor');
   assert.ok(html.includes('<p class="stamp">' + t.stamp + '</p>'), 'damga metni uyuşmuyor');
 });
+
+test('tavan = 2026 brüt asgari ücret × 12 × %20 (79.272 TL)', () => {
+  near(RULES.minWageMonth * 12 * RULES.stateRate, RULES.capYear);
+});
+
+test('bağımsız referans: her katkıyı ayrı ayrı bileştirerek aynı sonuç (500 rastgele senaryo, kuruş altı fark)', () => {
+  let seed = 12345;
+  const rnd = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
+  for (let i = 0; i < 500; i++) {
+    const p = {
+      monthly: Math.round(rnd() * 30000) / 1,
+      years: 1 + Math.floor(rnd() * 40),
+      age: 18 + Math.floor(rnd() * 50),
+      growth: rnd() * 0.5, ret: -0.2 + rnd() * 0.8, infl: rnd() * 0.5, alt: rnd() * 0.6,
+    };
+    const rows = simulate(p);
+    const m = Math.pow(1 + p.ret, 1 / 12) - 1;
+    for (const t of [3, 6, 10, p.years]) {
+      if (t > p.years) continue;
+      const K = t * 12;
+      let own = 0, ownC = 0, st = 0, stC = 0;
+      for (let k = 1; k <= K; k++) {
+        const y = Math.floor((k - 1) / 12);
+        const c = p.monthly * Math.pow(1 + p.growth, y);
+        const s = Math.min(0.2 * c, 79272 * Math.pow(1 + p.infl, y) / 12);
+        const f = Math.pow(1 + m, K - k + 1);
+        own += c * f; ownC += c; st += s * f; stC += s;
+      }
+      const elig = p.age + t >= 56 && t >= 10;
+      const sp = elig ? 0.05 : t >= 10 ? 0.10 : 0.15;
+      const hv = elig ? 1 : t >= 10 ? 0.60 : t >= 6 ? 0.35 : t >= 3 ? 0.15 : 0;
+      const net = own - Math.max(0, own - ownC) * sp + hv * (st - Math.max(0, st - stC) * sp);
+      const r = rows[t - 1];
+      assert.ok(Math.abs(r.net - net) <= Math.max(0.005, Math.abs(net) * 1e-9), `t=${t} ${JSON.stringify(p)} ${r.net} vs ${net}`);
+    }
+  }
+});
