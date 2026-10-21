@@ -39,10 +39,12 @@
       </div>
     </section>
 
+    <div class="stickybar" id="stickybar" aria-hidden="true" hidden><span>Eline geçecek <b id="sb-net"></b></span><span>Bugünün parası <b id="sb-real"></b></span></div>
     <section class="panel result" aria-labelledby="h-out">
       <h2 id="h-out" class="big-label" style="font-family:var(--f-body);font-weight:400;font-size:.85rem;margin:0">Çıkışta eline geçecek (vergi ve hak ediş sonrası)</h2>
       <noscript><div class="note">Hesaplayıcı çalışmak için JavaScript gerektirir. Tarayıcında JavaScript'i açıp sayfayı yenile.</div></noscript>
       <div class="note" id="jsfail" role="alert" hidden>Hesaplayıcı çalışmadı. Sayfayı yenile; sorun sürerse tarayıcında JavaScript'in açık olduğundan emin ol.</div>
+      <p class="lead" id="lead"></p>
       <div class="big" id="net">–</div>
       <p class="real" id="real"></p>
       <div class="notes" id="notes"></div>
@@ -199,7 +201,10 @@ function render(){
   const N=rows.length, last=rows[N-1];
   const R=Math.round;
   $('net').textContent=tl(last.net);
-  $('real').innerHTML='Bugünün parasıyla yaklaşık <b>'+tl(last.real)+'</b>';
+  const endAge=Math.round(p.age+N);
+  $('lead').textContent='Ayda '+tl(p.monthly)+' ile '+N+' yıl, '+endAge+' yaşında çıkış:';
+  $('real').innerHTML='Bugünün parasıyla yaklaşık <b>'+tl(last.real)+'</b><span class="why">'+N+' yıl sonraki paranın, yıllık '+pc(p.infl)+' enflasyonla bugünkü alım gücü</span>';
+  $('sb-net').textContent=tl(last.net); $('sb-real').textContent=tl(last.real);
 
   const notes=[];
   if(errors.length) notes.push(['','Geçersiz değer var: '+errors.map(e=>e.name).join(', ')+'. Sonuç bu alanların son geçerli değerleriyle gösteriliyor.']);
@@ -214,11 +219,13 @@ function render(){
 
   // Özet satırları: ekrandaki yuvarlanmış tutarlar birbiriyle tutarlı (brüt − kayıp = eline geçen)
   const gross=R(last.own+last.st), netR=R(last.net), lostR=gross-netR;
+  const taxR=Math.min(lostR,R((last.own-last.ownNet)+(last.st-last.stNetFull))), forfR=lostR-taxR;
   $('rows').innerHTML=
     '<dt>Toplam yatırdığın katkı</dt><dd>'+tl(last.ownC)+'</dd>'+
     '<dt>Yatan devlet katkısı</dt><dd>'+tl(last.stC)+'</dd>'+
     '<dt>Hesapta biriken (brüt)</dt><dd>'+tl(gross)+'</dd>'+
-    '<dt>Stopaj ve hak edilmeyen kısım</dt><dd>−'+tl(lostR)+'</dd>'+
+    '<dt>Stopaj (getiri vergisi)</dt><dd>−'+tl(taxR)+'</dd>'+
+    '<dt>Hak edilmeyen devlet katkısı</dt><dd>−'+tl(forfR)+'</dd>'+
     '<dt>Eline geçen</dt><dd>'+tl(netR)+'</dd>';
 
   // yıl yıl çıkış
@@ -256,6 +263,8 @@ function safeRender(){
   const s=document.querySelector('.stamp'); if(s) s.textContent=t.stamp;
   for(const k of ['state','vest','stopaj']){ const li=document.querySelector('li[data-rule="'+k+'"]'); if(li) li.textContent=t[k]; }
 })();
+try{ if('IntersectionObserver' in window){ const sb=$('stickybar'), box=document.querySelector('.result');
+  new IntersectionObserver(es=>{ sb.hidden=es[0].isIntersecting; },{threshold:0.15}).observe(box); } }catch(e){}
 ['monthly','years','age','growth','ret','fee','infl','alt'].forEach(id=>$(id).addEventListener('input',safeRender));
 safeRender();
 
