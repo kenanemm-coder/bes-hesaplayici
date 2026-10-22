@@ -27,7 +27,7 @@ body{
   padding-block:28px 48px;
 }
 .wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
-h1{font-family:var(--f-display);font-size:clamp(1.9rem,6vw,2.7rem);line-height:1.08;margin:0 0 8px;letter-spacing:-.02em;text-wrap:balance}
+h1{overflow-wrap:anywhere;font-family:var(--f-display);font-size:clamp(1.9rem,6vw,2.7rem);line-height:1.08;margin:0 0 8px;letter-spacing:-.02em;text-wrap:balance}
 h2{font-family:var(--f-display);font-size:1.25rem;margin:0 0 10px;letter-spacing:-.01em;text-wrap:balance}
 p{margin:0}
 .lead{color:var(--muted);max-width:62ch}
@@ -113,7 +113,7 @@ a{color:var(--accent)}
 dl.rows dd{overflow-wrap:anywhere;min-width:0}
 dl.rows dt{min-width:0}
 
-.lead{margin:0;font-size:.95rem;color:var(--muted)}
+.sumlead{margin:0;font-size:.95rem;color:var(--muted)}
 .real{font-size:1.05rem}
 .real .why{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
 .stickybar{display:none}
@@ -123,3 +123,4 @@ dl.rows dt{min-width:0}
   .stickybar b{display:block;font-family:var(--f-num);font-weight:500;font-size:1rem;color:var(--fg)}
 }
 .real b{white-space:nowrap}
+.tablewrap:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
