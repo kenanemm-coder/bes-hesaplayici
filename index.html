@@ -49,9 +49,20 @@
       <p class="real" id="real"></p>
       <div class="notes" id="notes"></div>
       <dl class="rows" id="rows"></dl>
+      <div class="share"><button type="button" id="copybtn">Bağlantıyı kopyala</button><button type="button" id="sharebtn" hidden>Paylaş</button><span id="sharemsg" role="status" aria-live="polite"></span></div>
+      <p class="sharenote">Bağlantı yalnızca girdiğin sayıları içerir, hiçbir yere kaydedilmez.</p>
       <p class="sr-only" id="sr" role="status" aria-live="polite"></p>
     </section>
   </div>
+
+  <section class="sec">
+    <h2>Yıllara göre birikim</h2>
+    <p>Seçtiğin süre boyunca her yıl çıksaydın eline geçecek tutar, yatırdığın katkı ve alternatif.</p>
+    <div class="seg" role="group" aria-label="Para birimi görünümü"><button type="button" id="vReal" aria-pressed="true">Bugünün parasıyla</button><button type="button" id="vNom" aria-pressed="false">O günün parasıyla</button></div>
+    <div class="legend" id="legend"></div>
+    <div class="chartbox"><svg id="chart" viewBox="0 0 640 300" role="img" aria-label="Grafik yüklenemedi"></svg></div>
+    <p class="chartnote" id="chartnote"></p>
+  </section>
 
   <section class="sec">
     <h2>Yıl yıl çıkış</h2>
@@ -113,14 +124,14 @@ function capContribution(){ return RULES.capYear/RULES.stateRate; }
 function simulate(p){
   const N=Math.round(p.years);
   const m=Math.pow(1+p.ret-(p.fee||0),1/12)-1, ma=Math.pow(1+p.alt,1/12)-1;
-  let own=0,ownC=0,st=0,stC=0,alt=0;
+  let own=0,ownC=0,ownCR=0,st=0,stC=0,alt=0;
   const rows=[];
   for(let k=1;k<=N*12;k++){
     const y=Math.floor((k-1)/12);
     const c=p.monthly*Math.pow(1+p.growth,y);
     const capM=RULES.capYear*Math.pow(1+p.infl,y)/12;
     const s=Math.min(RULES.stateRate*c,capM);
-    own=(own+c)*(1+m); ownC+=c;
+    own=(own+c)*(1+m); ownC+=c; ownCR+=c/Math.pow(1+p.infl,(k-1)/12);
     st=(st+s)*(1+m); stC+=s;
     alt=(alt+c)*(1+ma);
     if(k%12===0){
@@ -132,7 +143,7 @@ function simulate(p){
       const stPaid=hv*stNetFull;
       const net=ownNet+stPaid;
       const d=Math.pow(1+p.infl,t);
-      rows.push({t,elig,sp,hv,own,ownC,st,stC,ownNet,stNetFull,stPaid,net,real:net/d,altNet:alt,altReal:alt/d});
+      rows.push({t,elig,sp,hv,own,ownC,ownCR,st,stC,ownNet,stNetFull,stPaid,net,real:net/d,altNet:alt,altReal:alt/d});
     }
   }
   return rows;
@@ -201,6 +212,7 @@ function render(){
   const N=rows.length, last=rows[N-1];
   const R=Math.round;
   $('net').textContent=tl(last.net);
+  lastChart=rows; if(typeof drawChart==='function') drawChart();
   const endAge=Math.round(p.age+N);
   $('lead').textContent='Ayda '+tl(p.monthly)+' ile '+N+' yıl, '+endAge+' yaşında çıkış:';
   $('real').innerHTML='Bugünün parasıyla yaklaşık <b>'+tl(last.real)+'</b><span class="why">'+N+' yıl sonraki paranın, yıllık '+pc(p.infl)+' enflasyonla bugünkü alım gücü</span>';
@@ -265,7 +277,67 @@ function safeRender(){
 })();
 try{ if('IntersectionObserver' in window){ const sb=$('stickybar'), box=document.querySelector('.result');
   new IntersectionObserver(es=>{ sb.hidden=es[0].isIntersecting; },{threshold:0.15}).observe(box); } }catch(e){}
-['monthly','years','age','growth','ret','fee','infl','alt'].forEach(id=>$(id).addEventListener('input',safeRender));
+
+/* ---- Paylaşılabilir bağlantı: girdiler adres çubuğunda ---- */
+const URLKEYS={monthly:'a',years:'s',age:'y',growth:'k',ret:'g',fee:'f',infl:'e',alt:'x'};
+function readUrl(){
+  try{
+    const q=new URLSearchParams(location.search);
+    for(const id in URLKEYS){ const v=q.get(URLKEYS[id]); if(v!==null&&/^-?\d{1,9}([.,]\d{1,4})?$/.test(v)) $(id).value=v.replace(',','.'); }
+  }catch(e){}
+}
+function shareUrl(){
+  const q=new URLSearchParams();
+  for(const id in URLKEYS){ const v=$(id).value; if(v!=='') q.set(URLKEYS[id],v); }
+  return location.origin==='null'||location.protocol==='file:' ? location.href.split('?')[0]+'?'+q : location.origin+location.pathname+'?'+q;
+}
+let urlTimer;
+function syncUrl(){ clearTimeout(urlTimer); urlTimer=setTimeout(()=>{ try{ history.replaceState(null,'',shareUrl()); }catch(e){} },400); }
+function say(t){ const m=$('sharemsg'); m.textContent=t; clearTimeout(say.t); say.t=setTimeout(()=>{m.textContent='';},3000); }
+$('copybtn').addEventListener('click',async()=>{
+  const u=shareUrl();
+  try{ await navigator.clipboard.writeText(u); say('Bağlantı kopyalandı.'); }
+  catch(e){ try{ const ta=document.createElement('textarea'); ta.value=u; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); const ok=document.execCommand('copy'); ta.remove(); say(ok?'Bağlantı kopyalandı.':'Kopyalanamadı, adres çubuğundaki bağlantıyı kullan.'); }catch(e2){ say('Kopyalanamadı, adres çubuğundaki bağlantıyı kullan.'); } }
+});
+if(navigator.share){ $('sharebtn').hidden=false; $('sharebtn').addEventListener('click',()=>{ navigator.share({title:'BES Hesaplayıcı',text:'BES hesaplama senaryom',url:shareUrl()}).catch(()=>{}); }); }
+
+/* ---- Grafik (SVG, bağımlılık yok) ---- */
+let chartReal=true, lastChart=null;
+const SVGNS='http://www.w3.org/2000/svg';
+function compact(n){ const a=Math.abs(n); const f=(x)=>(Math.round(x*10)/10).toLocaleString('tr-TR',{maximumFractionDigits:1});
+  return a>=1e9?f(n/1e9)+' mlr':a>=1e6?f(n/1e6)+' mn':a>=1e3?f(n/1e3)+' bin':f(n); }
+function niceMax(v){ if(!(v>0)) return 1; const e=Math.pow(10,Math.floor(Math.log10(v))); const f=v/e; return (f<=1?1:f<=2?2:f<=5?5:10)*e; }
+function drawChart(){
+  if(!lastChart) return; const rows=lastChart;
+  const svg=$('chart'), W=Math.max(280,Math.round(svg.parentNode.clientWidth-16)||640), H=W<500?250:300, L=62, R=14, T=14, B=44;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  const S=[
+    {k:'net', name:'BES, eline geçen', cls:'c1', dash:'', y:r=>chartReal?r.real:r.net},
+    {k:'alt', name:'Alternatif', cls:'c2', dash:'7 4', y:r=>chartReal?r.altReal:r.altNet},
+    {k:'cont', name:'Yatırdığın katkı', cls:'c3', dash:'2 4', y:r=>chartReal?r.ownCR:r.ownC}
+  ];
+  let mx=0; rows.forEach(r=>S.forEach(s=>{const v=s.y(r); if(isFinite(v)&&v>mx) mx=v;}));
+  if(!(mx>0)||mx>=RULES.maxDisplay){ svg.innerHTML=''; svg.setAttribute('aria-label','Bu değerlerle grafik çizilemiyor.'); $('legend').innerHTML=''; $('chartnote').textContent='Bu değerlerle grafik çizilemiyor.'; return; }
+  const top=niceMax(mx), N=rows.length, x=t=>L+(N===1?(W-L-R)/2:(t-1)/(N-1)*(W-L-R)), y=v=>T+(1-Math.max(0,v)/top)*(H-T-B);
+  let g='';
+  for(let i=0;i<=4;i++){ const v=top*i/4, yy=y(v); g+='<line class="grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'"/><text class="ax" x="'+(L-6)+'" y="'+(yy+4)+'" text-anchor="end">'+compact(v)+'</text>'; }
+  const step=N<=10?1:N<=20?2:N<=30?5:5;
+  rows.forEach(r=>{ if(r.t===1||r.t%step===0||r.t===N) g+='<text class="ax" x="'+x(r.t)+'" y="'+(H-24)+'" text-anchor="middle">'+r.t+'</text>'; });
+  g+='<text class="ax" x="'+(L+(W-L-R)/2)+'" y="'+(H-6)+'" text-anchor="middle">Yıl</text>';
+  [3,6,10].forEach(t=>{ if(t<=N&&N>1){ g+='<line class="mark" x1="'+x(t)+'" x2="'+x(t)+'" y1="'+T+'" y2="'+(H-B)+'"/>'; } });
+  S.slice().reverse().forEach(s=>{ const pts=rows.map(r=>x(r.t).toFixed(1)+','+y(s.y(r)).toFixed(1)).join(' ');
+    g+=(N>1?'<polyline class="ln '+s.cls+'" stroke-dasharray="'+s.dash+'" fill="none" points="'+pts+'"/>':'')+'<circle class="dot '+s.cls+'" cx="'+x(rows[N-1].t).toFixed(1)+'" cy="'+y(s.y(rows[N-1])).toFixed(1)+'" r="4"/>'; });
+  svg.innerHTML=g;
+  const e=rows[N-1];
+  svg.setAttribute('aria-label',N+' yıl sonunda '+(chartReal?'bugünün parasıyla ':'')+'BES '+tl(S[0].y(e))+', alternatif '+tl(S[1].y(e))+', yatırdığın katkı '+tl(S[2].y(e))+'. Ayrıntılar aşağıdaki tablolarda.');
+  $('legend').innerHTML=S.map(s=>'<span class="lg"><svg width="28" height="10" aria-hidden="true"><line x1="1" x2="27" y1="5" y2="5" class="ln '+s.cls+'" stroke-dasharray="'+s.dash+'"/></svg>'+s.name+': <b>'+tl(s.y(e))+'</b></span>').join('');
+  $('chartnote').textContent='Dikey çizgiler 3, 6 ve 10. yılı gösterir (devlet katkısı hak ediş eşikleri). '+(chartReal?'Tutarlar bugünün alım gücüyle gösteriliyor.':'Tutarlar o yılın nominal parasıyla gösteriliyor.');
+}
+function setView(r){ chartReal=r; $('vReal').setAttribute('aria-pressed',String(r)); $('vNom').setAttribute('aria-pressed',String(!r)); drawChart(); }
+let rzW=0,rzT; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ const w=$('chart').parentNode.clientWidth; if(w!==rzW){rzW=w; drawChart();} },150); });
+$('vReal').addEventListener('click',()=>setView(true)); $('vNom').addEventListener('click',()=>setView(false));
+readUrl();
+['monthly','years','age','growth','ret','fee','infl','alt'].forEach(id=>$(id).addEventListener('input',()=>{safeRender();syncUrl();}));
 safeRender();
 
 fetch('veri/egm.json').then(r=>r.ok?r.json():null).then(d=>{

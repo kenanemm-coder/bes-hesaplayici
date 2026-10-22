@@ -169,3 +169,8 @@ test('ek gider kesintisi: getiriden düşer; 0 iken sonuç değişmez', () => {
   near(last({ ...p, fee: 0.03 }).net, last({ ...p, ret: 0.27 }).net);
   assert.ok(last({ ...p, fee: 0.03 }).net < last(p).net);
 });
+
+test('gerçek değerle katkı: enflasyon 0 iken nominal katkıya eşit, enflasyonda küçülür', () => {
+  const r0 = last({ ...base, infl: 0 }); near(r0.ownCR, r0.ownC);
+  const r1 = last({ ...base, infl: 0.25 }); assert.ok(r1.ownCR < r1.ownC && r1.ownCR > 0);
+});
